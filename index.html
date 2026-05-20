@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tips Manager</title>
+<style>
+:root {
+  --bg-0: #0a0e14;
+  --bg-1: #0f1419;
+  --bg-2: #161b22;
+  --bg-3: #1c2128;
+  --bg-hover: #22272e;
+  --border: #2d333b;
+  --border-strong: #444c56;
+  --text-1: #e6edf3;
+  --text-2: #adbac7;
+  --text-3: #768390;
+  --accent: #d4a574;
+  --accent-dim: #8b6f4a;
+  --accent-glow: rgba(212, 165, 116, 0.15);
+  --green: #3fb950;
+  --green-dim: rgba(63, 185, 80, 0.15);
+  --red: #f85149;
+  --red-dim: rgba(248, 81, 73, 0.15);
+  --blue: #539bf5;
+  --blue-dim: rgba(83, 155, 245, 0.12);
+  --yellow: #d29922;
+  --yellow-dim: rgba(210, 153, 34, 0.15);
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --radius: 6px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', 'Consolas', monospace;
+  background: var(--bg-0);
+  color: var(--text-1);
+  line-height: 1.5;
+  min-height: 100vh;
+  background-image:
+    radial-gradient(at 0% 0%, rgba(212, 165, 116, 0.04) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(83, 155, 245, 0.04) 0px, transparent 50%);
+  background-attachment: fixed;
+}
+
+header {
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--border);
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--bg-0);
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.brand-text {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.brand-text small {
+  display: block;
+  font-size: 11px;
+  color: var(--text-3);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.period-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 4px;
+}
+
+.period-selector select {
+  background: transparent;
+  border: none;
+  color: var(--text-1);
+  padding: 6px 10px;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.period-selector select:hover {
+  background: var(--bg-hover);
+}
+
+.period-selector .divider {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+}
+
+button, .btn {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  color: var(--text-1);
+  padding: 8px 14px;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+button:hover, .btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-strong);
+}
+
+button.primary {
+  background: var(--accent);
+  color: var(--bg-0);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+button.primary:hover {
+  background: #e6b886;
+  border-color: #e6b886;
+}
+
+button.danger {
+  color: var(--red);
+}
+
+button.danger:hover {
+  background: var(--red-dim);
+  border-color: var(--red);
+}
+
+nav.tabs {
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  display: flex;
+  gap: 4px;
+}
+
+.tab {
+  background: transparent;
+  border: none;
+  color: var(--text-3);
+  padding: 14px 18px;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+  letter-spacing: 0.02em;
+  transition: all 0.15s;
+}
+
+.tab:hover {
+  color: var(--text-2);
+  background: transparent;
+  border-color: transparent;
+}
+
+.tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+main {
+  padding: 28px;
+  max-width: 100%;
+}
+
+.panel {
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.panel-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.panel-title {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.panel-title .accent {
+  color: var(--accent);
+}
+
+.view { display: none; }
+.view.active { display: block; }
+
+/* TABLES */
+.table-wrap {
+  overflow-x: auto;
+  max-height: 75vh;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+}
+
+th {
+  background: var(--bg-2);
+  color: var(--text-2);
+  font-weight: 500;
+  text-align: center;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  white-space: nowrap;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+th:first-child {
+  text-align: left;
+  padding-left: 20px;
+}
+
+th.day-header {
+  min-width: 38px;
+  cursor: default;
+}
+
+th.col-name {
+  position: sticky;
+  left: 0;
+  z-index: 11;
+  background: var(--bg-2);
+  text-align: left;
+  min-width: 200px;
+}
+
+th.col-aa {
+  position: sticky;
+  left: 0;
+  z-index: 11;
+  background: var(--bg-2);
+  width: 50px;
+  min-width: 50px;
+}
+
+th.col-units {
+  width: 90px;
+  min-width: 90px;
+}
+
+th.col-total {
+  background: var(--bg-3);
+  min-width: 100px;
+}
+
+td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  text-align: center;
+  background: var(--bg-1);
+  transition: background 0.1s;
+}
+
+td.col-aa {
+  position: sticky;
+  left: 0;
+  background: var(--bg-1);
+  z-index: 5;
+  color: var(--text-3);
+  font-size: 12px;
+  width: 50px;
+}
+
+td.col-name {
+  position: sticky;
+  left: 50px;
+  background: var(--bg-1);
+  z-index: 5;
+  text-align: left;
+  padding-left: 12px;
+}
+
+td.col-name.empty-name { color: var(--text-3); font-style: italic; }
+
+td.total-cell {
+  background: var(--bg-3);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+td.day-cell.disabled {
+  background: repeating-linear-gradient(45deg, var(--bg-1), var(--bg-1) 4px, var(--bg-2) 4px, var(--bg-2) 8px);
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+tr:hover td:not(.disabled) {
+  background: var(--bg-2);
+}
+
+tr:hover td.col-name, tr:hover td.col-aa {
+  background: var(--bg-2);
+}
+
+tr:hover td.total-cell {
+  background: var(--bg-hover);
+}
+
+/* INPUTS */
+input[type="text"], input[type="number"] {
+  background: var(--bg-1);
+  border: 1px solid transparent;
+  color: var(--text-1);
+  padding: 5px 8px;
+  font-family: inherit;
+  font-size: 13px;
+  border-radius: 4px;
+  width: 100%;
+  outline: none;
+  transition: all 0.15s;
+}
+
+input[type="text"]:hover, input[type="number"]:hover {
+  background: var(--bg-2);
+}
+
+input[type="text"]:focus, input[type="number"]:focus {
+  background: var(--bg-2);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+td input[type="number"] {
+  text-align: center;
+}
+
+td input[type="text"] {
+  text-align: left;
+}
+
+/* PRESENCE TOGGLE */
+.presence-cell {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  user-select: none;
+  width: 100%;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.12s;
+}
+
+.presence-cell.yes {
+  background: var(--green-dim);
+  color: var(--green);
+}
+
+.presence-cell.yes::before { content: "✓"; }
+
+.presence-cell.no {
+  color: var(--text-3);
+}
+
+.presence-cell.no::before { content: "·"; font-size: 18px; }
+
+.presence-cell:hover {
+  background: var(--bg-hover);
+}
+
+.presence-cell.yes:hover {
+  background: rgba(63, 185, 80, 0.25);
+}
+
+/* TIPS INPUT */
+.tip-input {
+  background: var(--yellow-dim);
+  border: 1px solid var(--yellow);
+  color: var(--yellow);
+  font-weight: 600;
+  text-align: center;
+  width: 100%;
+  padding: 5px 4px;
+  font-size: 12px;
+  border-radius: 4px;
+  font-family: inherit;
+  outline: none;
+}
+
+.tip-input:focus {
+  background: rgba(210, 153, 34, 0.25);
+}
+
+.tip-display {
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.tip-display.has-value { color: var(--green); font-weight: 500; }
+
+/* SUMMARY CARDS */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  padding: 20px;
+}
+
+.stat-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--accent);
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--text-3);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.02em;
+}
+
+.stat-value.tips { color: var(--accent); }
+.stat-value.days { color: var(--green); }
+.stat-value.units { color: var(--blue); }
+
+.stat-sub {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 4px;
+}
+
+/* EMPTY STATE */
+.empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--text-3);
+}
+
+.empty-icon {
+  font-size: 48px;
+  opacity: 0.3;
+  margin-bottom: 12px;
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--bg-3);
+  border: 1px solid var(--border-strong);
+  color: var(--text-1);
+  padding: 12px 18px;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.2s;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast.success { border-color: var(--green); }
+.toast.error { border-color: var(--red); }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  backdrop-filter: blur(4px);
+}
+
+.modal-overlay.show { display: flex; }
+
+.modal {
+  background: var(--bg-1);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  padding: 24px;
+  max-width: 480px;
+  width: 90%;
+  box-shadow: var(--shadow);
+}
+
+.modal h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.modal p {
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 18px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* HELPER ROW */
+.row-info {
+  background: var(--blue-dim);
+  border-left: 3px solid var(--blue);
+  padding: 12px 18px;
+  margin: 0 20px 16px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--text-2);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.row-info strong { color: var(--blue); }
+
+/* ANNUAL VIEW */
+.annual-table th, .annual-table td {
+  padding: 10px 12px;
+  text-align: right;
+}
+
+.annual-table th:first-child, .annual-table td:first-child {
+  text-align: left;
+}
+
+.annual-table .month-row {
+  cursor: pointer;
+}
+
+.annual-table .month-row:hover {
+  background: var(--bg-2);
+}
+
+.annual-table .total-row {
+  background: var(--bg-3);
+  font-weight: 600;
+}
+
+.annual-table .total-row td {
+  background: var(--bg-3);
+  color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  header { padding: 12px 16px; }
+  main { padding: 16px; }
+  nav.tabs { padding: 0 16px; overflow-x: auto; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-icon">€</div>
+    <div class="brand-text">
+      Tips Manager
+      <small>Διαχείριση Παρουσιών &amp; Φιλοδωρημάτων</small>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="period-selector">
+      <select id="yearSelect"></select>
+      <div class="divider"></div>
+      <select id="monthSelect">
+        <option value="1">Ιανουάριος</option>
+        <option value="2">Φεβρουάριος</option>
+        <option value="3">Μάρτιος</option>
+        <option value="4">Απρίλιος</option>
+        <option value="5">Μάιος</option>
+        <option value="6">Ιούνιος</option>
+        <option value="7">Ιούλιος</option>
+        <option value="8">Αύγουστος</option>
+        <option value="9">Σεπτέμβριος</option>
+        <option value="10">Οκτώβριος</option>
+        <option value="11">Νοέμβριος</option>
+        <option value="12">Δεκέμβριος</option>
+      </select>
+    </div>
+    <button onclick="exportData()" title="Εξαγωγή όλων των δεδομένων σε JSON">⬇ Backup</button>
+    <button onclick="document.getElementById('importFile').click()" title="Εισαγωγή από αρχείο JSON">⬆ Restore</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+    <button onclick="exportCSV()" title="Εξαγωγή τρέχοντος μήνα σε CSV">📊 CSV</button>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-view="presence">Παρουσίες</button>
+  <button class="tab" data-view="tips">Φιλοδωρήματα</button>
+  <button class="tab" data-view="summary">Σύνοψη Μήνα</button>
+  <button class="tab" data-view="annual">Ετήσια Επισκόπηση</button>
+  <button class="tab" data-view="employees">Εργαζόμενοι</button>
+</nav>
+
+<main>
+
+  <!-- PRESENCE VIEW -->
+  <section class="view active" id="view-presence">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Παρουσίες <span class="accent" id="presence-period"></span></div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="fillAll('ΟΧΙ')">Καθαρισμός μήνα</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="presence-table"></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIPS VIEW -->
+  <section class="view" id="view-tips">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Φιλοδωρήματα <span class="accent" id="tips-period"></span></div>
+        <div style="font-size:13px;color:var(--text-2);">Σύνολο μήνα: <strong id="tips-month-total" style="color:var(--accent);">0,00 €</strong></div>
+      </div>
+      <div class="row-info">
+        <strong>Οδηγία:</strong>
+        <span>Στην <strong>πρώτη γραμμή</strong> (κίτρινα κελιά) γράφεις τα συνολικά φιλοδωρήματα κάθε ημέρας. Από κάτω εμφανίζεται αυτόματα πόσα αναλογούν στον καθένα — υπολογισμός: <em>(μονάδες_του ÷ συνολικές_μονάδες_ημέρας) × tips_ημέρας</em>.</span>
+      </div>
+      <div class="table-wrap">
+        <table id="tips-table"></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUMMARY VIEW -->
+  <section class="view" id="view-summary">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Σύνοψη <span class="accent" id="summary-period"></span></div>
+      </div>
+      <div class="summary-grid" id="summary-stats"></div>
+      <div class="table-wrap" style="border-top:1px solid var(--border);">
+        <table id="summary-table"></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANNUAL VIEW -->
+  <section class="view" id="view-annual">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Ετήσια Επισκόπηση <span class="accent" id="annual-year"></span></div>
+      </div>
+      <div class="table-wrap">
+        <table id="annual-table" class="annual-table"></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- EMPLOYEES VIEW -->
+  <section class="view" id="view-employees">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Μητρώο Εργαζομένων</div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="addEmployee()" class="primary">+ Προσθήκη</button>
+          <button onclick="confirmAction('Διαγραφή ΟΛΩΝ των εργαζομένων (τα ιστορικά παρουσιών παραμένουν);', clearEmployees)" class="danger">Καθαρισμός</button>
+        </div>
+      </div>
+      <div class="row-info">
+        <strong>Σημείωση:</strong>
+        <span>Τα ονόματα και οι μονάδες/μέρα είναι σταθερά για όλους τους μήνες. Οι μονάδες είναι το βάρος του εργαζόμενου στον υπολογισμό των tips (π.χ. μάστορας = 1.5, βοηθός = 1).</span>
+      </div>
+      <div class="table-wrap">
+        <table id="employees-table"></table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <h3 id="modalTitle">Επιβεβαίωση</h3>
+    <p id="modalText"></p>
+    <div class="modal-actions">
+      <button onclick="closeModal()">Άκυρο</button>
+      <button onclick="confirmModalAction()" class="primary">Συνέχεια</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+// ============= STATE =============
+const STORAGE_KEY = 'tipsManager_v1';
+const MONTHS_GR = ['Ιανουάριος','Φεβρουάριος','Μάρτιος','Απρίλιος','Μάιος','Ιούνιος',
+                   'Ιούλιος','Αύγουστος','Σεπτέμβριος','Οκτώβριος','Νοέμβριος','Δεκέμβριος'];
+
+let state = {
+  employees: [],          // [{id, name, units}]
+  presence: {},           // { "2026-5": { empId: { day: true } } }
+  tips: {},               // { "2026-5": { day: amount } }
+  currentYear: new Date().getFullYear(),
+  currentMonth: new Date().getMonth() + 1,
+};
+
+let pendingAction = null;
+
+// ============= STORAGE =============
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      state = { ...state, ...parsed };
+    }
+  } catch (e) {
+    console.error('Load error:', e);
+    toast('Σφάλμα φόρτωσης δεδομένων', 'error');
+  }
+  if (!state.employees || state.employees.length === 0) {
+    state.employees = createDefaultEmployees();
+  }
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      employees: state.employees,
+      presence: state.presence,
+      tips: state.tips,
+    }));
+  } catch (e) {
+    toast('Σφάλμα αποθήκευσης: ' + e.message, 'error');
+  }
+}
+
+function createDefaultEmployees() {
+  return Array.from({length: 5}, (_, i) => ({
+    id: 'emp_' + Date.now() + '_' + i,
+    name: '',
+    units: 1,
+  }));
+}
+
+// ============= HELPERS =============
+const periodKey = (y, m) => `${y}-${m}`;
+const daysInMonth = (y, m) => new Date(y, m, 0).getDate();
+const fmtMoney = v => (Number(v) || 0).toLocaleString('el-GR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+const fmtNum = v => (Number(v) || 0).toLocaleString('el-GR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+
+function getPresence(empId, day) {
+  const k = periodKey(state.currentYear, state.currentMonth);
+  return !!(state.presence[k]?.[empId]?.[day]);
+}
+
+function setPresence(empId, day, value) {
+  const k = periodKey(state.currentYear, state.currentMonth);
+  if (!state.presence[k]) state.presence[k] = {};
+  if (!state.presence[k][empId]) state.presence[k][empId] = {};
+  if (value) state.presence[k][empId][day] = true;
+  else delete state.presence[k][empId][day];
+  saveState();
+}
+
+function getTip(day) {
+  const k = periodKey(state.currentYear, state.currentMonth);
+  return state.tips[k]?.[day] || 0;
+}
+
+function setTip(day, amount) {
+  const k = periodKey(state.currentYear, state.currentMonth);
+  if (!state.tips[k]) state.tips[k] = {};
+  if (amount > 0) state.tips[k][day] = amount;
+  else delete state.tips[k][day];
+  saveState();
+}
+
+// Συνολικές μονάδες ημέρας (όσοι δούλεψαν επί τις μονάδες/μέρα τους)
+function unitsForDay(day) {
+  return state.employees.reduce((sum, emp) => {
+    return sum + (getPresence(emp.id, day) ? Number(emp.units || 0) : 0);
+  }, 0);
+}
+
+// Tips εργαζομένου για μια μέρα
+function empTipForDay(emp, day) {
+  if (!getPresence(emp.id, day)) return 0;
+  const totalUnits = unitsForDay(day);
+  if (totalUnits === 0) return 0;
+  const tip = getTip(day);
+  return (Number(emp.units || 0) / totalUnits) * tip;
+}
+
+// Σύνολο tips εργαζομένου για τον μήνα
+function empTotalTips(emp) {
+  const days = daysInMonth(state.currentYear, state.currentMonth);
+  let total = 0;
+  for (let d = 1; d <= days; d++) total += empTipForDay(emp, d);
+  return total;
+}
+
+// Σύνολο μερών εργαζομένου για τον μήνα
+function empTotalDays(emp) {
+  const days = daysInMonth(state.currentYear, state.currentMonth);
+  let total = 0;
+  for (let d = 1; d <= days; d++) if (getPresence(emp.id, d)) total++;
+  return total;
+}
+
+// ============= RENDERING =============
+function renderAll() {
+  const periodLabel = `· ${MONTHS_GR[state.currentMonth - 1]} ${state.currentYear}`;
+  document.getElementById('presence-period').textContent = periodLabel;
+  document.getElementById('tips-period').textContent = periodLabel;
+  document.getElementById('summary-period').textContent = periodLabel;
+  document.getElementById('annual-year').textContent = `· ${state.currentYear}`;
+
+  renderPresence();
+  renderTips();
+  renderSummary();
+  renderAnnual();
+  renderEmployees();
+}
+
+function renderPresence() {
+  const days = daysInMonth(state.currentYear, state.currentMonth);
+  const t = document.getElementById('presence-table');
+  let html = '<thead><tr>';
+  html += '<th class="col-aa">Α/Α</th>';
+  html += '<th class="col-name">Εργαζόμενος</th>';
+  html += '<th class="col-units">Μονάδες</th>';
+  for (let d = 1; d <= days; d++) html += `<th class="day-header">${d}</th>`;
+  html += '<th class="col-total">Μέρες</th><th class="col-total">Μονάδες·Μήνα</th>';
+  html += '</tr></thead><tbody>';
+
+  if (state.employees.length === 0) {
+    html += `<tr><td colspan="${days + 5}" class="empty">Δεν υπάρχουν εργαζόμενοι. Προσθέστε από την καρτέλα <strong>Εργαζόμενοι</strong>.</td></tr>`;
+  } else {
+    state.employees.forEach((emp, idx) => {
+      const totalDays = empTotalDays(emp);
+      const totalUnits = totalDays * Number(emp.units || 0);
+      html += `<tr><td class="col-aa">${idx + 1}</td>`;
+      html += `<td class="col-name${emp.name ? '' : ' empty-name'}">${emp.name || '— Χωρίς όνομα —'}</td>`;
+      html += `<td>${fmtNum(emp.units)}</td>`;
+      for (let d = 1; d <= days; d++) {
+        const isYes = getPresence(emp.id, d);
+        html += `<td class="day-cell"><div class="presence-cell ${isYes ? 'yes' : 'no'}" data-emp="${emp.id}" data-day="${d}" title="${isYes ? 'ΝΑΙ' : 'ΟΧΙ'} - κλικ για εναλλαγή"></div></td>`;
+      }
+      html += `<td class="total-cell">${totalDays}</td>`;
+      html += `<td class="total-cell">${fmtNum(totalUnits)}</td>`;
+      html += '</tr>';
+    });
+
+    // Γραμμή Σύνολα ημέρας
+    html += '<tr style="background:var(--bg-3);font-weight:600;">';
+    html += '<td class="col-aa" style="background:var(--bg-3);"></td>';
+    html += '<td class="col-name" style="background:var(--bg-3);color:var(--text-2);">Σύνολο μονάδων ημέρας</td>';
+    html += '<td style="color:var(--text-3);">—</td>';
+    let grandUnits = 0;
+    for (let d = 1; d <= days; d++) {
+      const u = unitsForDay(d);
+      grandUnits += u;
+      html += `<td style="color:${u > 0 ? 'var(--blue)' : 'var(--text-3)'}">${u > 0 ? fmtNum(u) : '·'}</td>`;
+    }
+    let grandDays = state.employees.reduce((s, e) => s + empTotalDays(e), 0);
+    html += `<td class="total-cell">${grandDays}</td>`;
+    html += `<td class="total-cell">${fmtNum(grandUnits)}</td>`;
+    html += '</tr>';
+  }
+
+  html += '</tbody>';
+  t.innerHTML = html;
+
+  // Bind clicks
+  t.querySelectorAll('.presence-cell').forEach(cell => {
+    cell.addEventListener('click', () => togglePresence(cell.dataset.emp, parseInt(cell.dataset.day)));
+  });
+}
+
+function togglePresence(empId, day) {
+  setPresence(empId, day, !getPresence(empId, day));
+  renderAll();
+}
+
+function renderTips() {
+  const days = daysInMonth(state.currentYear, state.currentMonth);
+  const t = document.getElementById('tips-table');
+  let html = '<thead><tr>';
+  html += '<th class="col-aa">Α/Α</th>';
+  html += '<th class="col-name">Εργαζόμενος</th>';
+  html += '<th class="col-units">Μον.</th>';
+  for (let d = 1; d <= days; d++) html += `<th class="day-header">${d}</th>`;
+  html += '<th class="col-total">Σύνολο €</th>';
+  html += '</tr></thead><tbody>';
+
+  // Γραμμή tips ημέρας (input)
+  html += '<tr style="background:var(--bg-3);">';
+  html += '<td class="col-aa" style="background:var(--bg-3);"></td>';
+  html += '<td class="col-name" style="background:var(--bg-3);color:var(--yellow);font-weight:600;">Tips Ημέρας (€)</td>';
+  html += '<td style="background:var(--bg-3);color:var(--text-3);">—</td>';
+  for (let d = 1; d <= days; d++) {
+    const v = getTip(d);
+    html += `<td style="background:var(--bg-3);padding:4px;"><input type="number" class="tip-input" min="0" step="0.01" value="${v || ''}" placeholder="0" data-day="${d}"></td>`;
+  }
+  let monthTotal = 0;
+  for (let d = 1; d <= days; d++) monthTotal += getTip(d);
+  html += `<td class="total-cell">${fmtMoney(monthTotal)}</td>`;
+  html += '</tr>';
+
+  // Γραμμή σύνολο μονάδων ημέρας (info)
+  html += '<tr style="background:var(--bg-2);">';
+  html += '<td class="col-aa" style="background:var(--bg-2);"></td>';
+  html += '<td class="col-name" style="background:var(--bg-2);color:var(--text-3);font-size:11px;">Συν. μονάδες ημέρας</td>';
+  html += '<td style="background:var(--bg-2);"></td>';
+  for (let d = 1; d <= days; d++) {
+    const u = unitsForDay(d);
+    html += `<td style="background:var(--bg-2);font-size:11px;color:${u > 0 ? 'var(--blue)' : 'var(--text-3)'};">${u > 0 ? fmtNum(u) : '·'}</td>`;
+  }
+  html += `<td style="background:var(--bg-2);"></td>`;
+  html += '</tr>';
+
+  if (state.employees.length === 0) {
+    html += `<tr><td colspan="${days + 4}" class="empty">Δεν υπάρχουν εργαζόμενοι.</td></tr>`;
+  } else {
+    state.employees.forEach((emp, idx) => {
+      html += `<tr><td class="col-aa">${idx + 1}</td>`;
+      html += `<td class="col-name${emp.name ? '' : ' empty-name'}">${emp.name || '— Χωρίς όνομα —'}</td>`;
+      html += `<td style="color:var(--text-3);">${fmtNum(emp.units)}</td>`;
+      let empTotal = 0;
+      for (let d = 1; d <= days; d++) {
+        const tip = empTipForDay(emp, d);
+        empTotal += tip;
+        const cls = tip > 0 ? 'has-value' : '';
+        html += `<td class="tip-display ${cls}">${tip > 0 ? fmtNum(tip) : '·'}</td>`;
+      }
+      html += `<td class="total-cell">${fmtMoney(empTotal)}</td>`;
+      html += '</tr>';
+    });
+
+    // Έλεγχος διαμοιρασμού
+    html += '<tr style="background:var(--bg-2);">';
+    html += '<td class="col-aa" style="background:var(--bg-2);"></td>';
+    html += '<td class="col-name" style="background:var(--bg-2);color:var(--text-3);font-size:11px;">Έλεγχος διαμοιρασμού</td>';
+    html += '<td style="background:var(--bg-2);"></td>';
+    let checkTotal = 0;
+    for (let d = 1; d <= days; d++) {
+      let dayCheck = 0;
+      state.employees.forEach(emp => { dayCheck += empTipForDay(emp, d); });
+      checkTotal += dayCheck;
+      const tipDay = getTip(d);
+      const ok = Math.abs(dayCheck - tipDay) < 0.01;
+      const color = (tipDay === 0 && dayCheck === 0) ? 'var(--text-3)' : (ok ? 'var(--green)' : 'var(--red)');
+      html += `<td style="background:var(--bg-2);font-size:11px;color:${color};">${dayCheck > 0 ? fmtNum(dayCheck) : '·'}</td>`;
+    }
+    html += `<td class="total-cell">${fmtMoney(checkTotal)}</td>`;
+    html += '</tr>';
+  }
+
+  html += '</tbody>';
+  t.innerHTML = html;
+
+  document.getElementById('tips-month-total').textContent = fmtMoney(monthTotal);
+
+  // Bind tip inputs
+  t.querySelectorAll('.tip-input').forEach(inp => {
+    inp.addEventListener('change', e => {
+      setTip(parseInt(e.target.dataset.day), parseFloat(e.target.value) || 0);
+      renderAll();
+    });
+    inp.addEventListener('blur', e => {
+      setTip(parseInt(e.target.dataset.day), parseFloat(e.target.value) || 0);
+      renderAll();
+    });
+  });
+}
+
+function renderSummary() {
+  const stats = document.getElementById('summary-stats');
+  const days = daysInMonth(state.currentYear, state.currentMonth);
+
+  let totalTips = 0;
+  for (let d = 1; d <= days; d++) totalTips += getTip(d);
+  let totalDays = state.employees.reduce((s, e) => s + empTotalDays(e), 0);
+  let totalUnits = state.employees.reduce((s, e) => s + (empTotalDays(e) * Number(e.units || 0)), 0);
+  let activeEmps = state.employees.filter(e => empTotalDays(e) > 0).length;
+  let workDays = 0;
+  for (let d = 1; d <= days; d++) if (unitsForDay(d) > 0) workDays++;
+
+  stats.innerHTML = `
+    <div class="stat-card"><div class="stat-label">Σύνολο Tips</div><div class="stat-value tips">${fmtMoney(totalTips)}</div><div class="stat-sub">${workDays} εργάσιμες ημέρες</div></div>
+    <div class="stat-card"><div class="stat-label">Σύνολο Μερών</div><div class="stat-value days">${totalDays}</div><div class="stat-sub">${activeEmps} ενεργοί εργαζόμενοι</div></div>
+    <div class="stat-card"><div class="stat-label">Σύνολο Μονάδων</div><div class="stat-value units">${fmtNum(totalUnits)}</div><div class="stat-sub">σταθμισμένα μεροκάματα</div></div>
+    <div class="stat-card"><div class="stat-label">Μέσος Όρος Tips/Μέρα</div><div class="stat-value">${workDays > 0 ? fmtMoney(totalTips / workDays) : fmtMoney(0)}</div><div class="stat-sub">ανά εργάσιμη ημέρα</div></div>
+  `;
+
+  const t = document.getElementById('summary-table');
+  let html = '<thead><tr><th class="col-aa">Α/Α</th><th class="col-name">Εργαζόμενος</th><th>Μονάδες/Μέρα</th><th>Σύν. Μέρες</th><th>Σύν. Μονάδες</th><th>Σύνολο €</th><th>€ / Μέρα</th></tr></thead><tbody>';
+
+  if (state.employees.length === 0) {
+    html += `<tr><td colspan="7" class="empty">Δεν υπάρχουν εργαζόμενοι.</td></tr>`;
+  } else {
+    const sorted = [...state.employees].map((emp, idx) => ({
+      emp, idx,
+      days: empTotalDays(emp),
+      tips: empTotalTips(emp),
+      monthUnits: empTotalDays(emp) * Number(emp.units || 0),
+    })).sort((a, b) => b.tips - a.tips);
+
+    sorted.forEach(({emp, idx, days, tips, monthUnits}) => {
+      const avgPerDay = days > 0 ? tips / days : 0;
+      html += `<tr><td class="col-aa">${idx + 1}</td>`;
+      html += `<td class="col-name${emp.name ? '' : ' empty-name'}">${emp.name || '— Χωρίς όνομα —'}</td>`;
+      html += `<td>${fmtNum(emp.units)}</td>`;
+      html += `<td>${days}</td>`;
+      html += `<td>${fmtNum(monthUnits)}</td>`;
+      html += `<td class="total-cell">${fmtMoney(tips)}</td>`;
+      html += `<td>${fmtMoney(avgPerDay)}</td></tr>`;
+    });
+
+    html += `<tr class="total-row"><td></td><td>ΣΥΝΟΛΟ</td><td>—</td><td>${totalDays}</td><td>${fmtNum(totalUnits)}</td><td>${fmtMoney(totalTips)}</td><td>—</td></tr>`;
+  }
+
+  html += '</tbody>';
+  t.innerHTML = html;
+}
+
+function renderAnnual() {
+  const t = document.getElementById('annual-table');
+  let html = '<thead><tr><th>Μήνας</th><th>Εργάσιμες</th><th>Σύν. Μέρες</th><th>Σύν. Μονάδες</th><th>Σύνολο Tips</th><th>Μ.Ο. €/Μέρα</th></tr></thead><tbody>';
+
+  let yearTips = 0, yearDays = 0, yearUnits = 0, yearWorkDays = 0;
+  const savedMonth = state.currentMonth;
+
+  for (let m = 1; m <= 12; m++) {
+    state.currentMonth = m;
+    const days = daysInMonth(state.currentYear, m);
+    let monthTips = 0, workDays = 0;
+    for (let d = 1; d <= days; d++) {
+      monthTips += getTip(d);
+      if (unitsForDay(d) > 0) workDays++;
+    }
+    const monthDays = state.employees.reduce((s, e) => s + empTotalDays(e), 0);
+    const monthUnits = state.employees.reduce((s, e) => s + (empTotalDays(e) * Number(e.units || 0)), 0);
+    yearTips += monthTips; yearDays += monthDays; yearUnits += monthUnits; yearWorkDays += workDays;
+
+    const avg = workDays > 0 ? monthTips / workDays : 0;
+    const isCurrent = m === savedMonth;
+    html += `<tr class="month-row${isCurrent ? ' current' : ''}" data-month="${m}" style="${isCurrent ? 'background:var(--bg-2);' : ''}">`;
+    html += `<td>${MONTHS_GR[m - 1]}</td>`;
+    html += `<td>${workDays || '·'}</td>`;
+    html += `<td>${monthDays || '·'}</td>`;
+    html += `<td>${monthUnits > 0 ? fmtNum(monthUnits) : '·'}</td>`;
+    html += `<td style="color:${monthTips > 0 ? 'var(--accent)' : 'var(--text-3)'};font-weight:${monthTips > 0 ? '600' : '400'}">${monthTips > 0 ? fmtMoney(monthTips) : '·'}</td>`;
+    html += `<td>${avg > 0 ? fmtMoney(avg) : '·'}</td>`;
+    html += '</tr>';
+  }
+
+  state.currentMonth = savedMonth;
+
+  const yearAvg = yearWorkDays > 0 ? yearTips / yearWorkDays : 0;
+  html += `<tr class="total-row"><td>ΣΥΝΟΛΟ ${state.currentYear}</td><td>${yearWorkDays}</td><td>${yearDays}</td><td>${fmtNum(yearUnits)}</td><td>${fmtMoney(yearTips)}</td><td>${fmtMoney(yearAvg)}</td></tr>`;
+  html += '</tbody>';
+  t.innerHTML = html;
+
+  // Click to jump to month
+  t.querySelectorAll('.month-row').forEach(row => {
+    row.addEventListener('click', () => {
+      state.currentMonth = parseInt(row.dataset.month);
+      document.getElementById('monthSelect').value = state.currentMonth;
+      switchView('presence');
+      renderAll();
+    });
+  });
+}
+
+function renderEmployees() {
+  const t = document.getElementById('employees-table');
+  let html = '<thead><tr><th class="col-aa">Α/Α</th><th>Όνομα</th><th>Μονάδες/Μέρα</th><th>Ενέργειες</th></tr></thead><tbody>';
+
+  if (state.employees.length === 0) {
+    html += `<tr><td colspan="4" class="empty"><div class="empty-icon">👥</div>Δεν υπάρχουν εργαζόμενοι.</td></tr>`;
+  } else {
+    state.employees.forEach((emp, idx) => {
+      html += `<tr><td class="col-aa">${idx + 1}</td>`;
+      html += `<td><input type="text" value="${escapeHtml(emp.name)}" data-id="${emp.id}" data-field="name" placeholder="Όνομα..."></td>`;
+      html += `<td><input type="number" value="${emp.units}" min="0" step="0.25" data-id="${emp.id}" data-field="units"></td>`;
+      html += `<td style="display:flex;gap:6px;justify-content:center;">`;
+      html += `<button onclick="moveEmployee('${emp.id}', -1)" ${idx === 0 ? 'disabled style="opacity:0.3"' : ''}>↑</button>`;
+      html += `<button onclick="moveEmployee('${emp.id}', 1)" ${idx === state.employees.length - 1 ? 'disabled style="opacity:0.3"' : ''}>↓</button>`;
+      html += `<button onclick="confirmDeleteEmployee('${emp.id}')" class="danger">×</button>`;
+      html += `</td></tr>`;
+    });
+  }
+
+  html += '</tbody>';
+  t.innerHTML = html;
+
+  t.querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('change', e => {
+      const emp = state.employees.find(x => x.id === e.target.dataset.id);
+      if (!emp) return;
+      const field = e.target.dataset.field;
+      if (field === 'name') emp.name = e.target.value.trim();
+      else if (field === 'units') emp.units = Math.max(0, parseFloat(e.target.value) || 0);
+      saveState();
+      renderAll();
+    });
+  });
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ============= ACTIONS =============
+function addEmployee() {
+  state.employees.push({
+    id: 'emp_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+    name: '',
+    units: 1,
+  });
+  saveState();
+  renderAll();
+  toast('Προστέθηκε νέος εργαζόμενος', 'success');
+}
+
+function deleteEmployee(id) {
+  state.employees = state.employees.filter(e => e.id !== id);
+  // Καθαρισμός ιστορικού παρουσιών αυτού του εργαζομένου
+  Object.keys(state.presence).forEach(k => {
+    if (state.presence[k][id]) delete state.presence[k][id];
+  });
+  saveState();
+  renderAll();
+  toast('Εργαζόμενος διαγράφηκε', 'success');
+}
+
+function confirmDeleteEmployee(id) {
+  const emp = state.employees.find(e => e.id === id);
+  const name = emp?.name || 'τον εργαζόμενο';
+  confirmAction(`Διαγραφή "${name}"; Θα χαθούν όλα τα ιστορικά παρουσιών του.`, () => deleteEmployee(id));
+}
+
+function moveEmployee(id, direction) {
+  const idx = state.employees.findIndex(e => e.id === id);
+  const newIdx = idx + direction;
+  if (newIdx < 0 || newIdx >= state.employees.length) return;
+  [state.employees[idx], state.employees[newIdx]] = [state.employees[newIdx], state.employees[idx]];
+  saveState();
+  renderAll();
+}
+
+function clearEmployees() {
+  state.employees = [];
+  saveState();
+  renderAll();
+  toast('Λίστα εργαζομένων καθαρίστηκε', 'success');
+}
+
+function fillAll(value) {
+  confirmAction(`Καθαρισμός ΟΛΩΝ των παρουσιών για ${MONTHS_GR[state.currentMonth-1]} ${state.currentYear}; (Τα tips παραμένουν)`, () => {
+    const k = periodKey(state.currentYear, state.currentMonth);
+    delete state.presence[k];
+    saveState();
+    renderAll();
+    toast('Παρουσίες μήνα καθαρίστηκαν', 'success');
+  });
+}
+
+// ============= EXPORT / IMPORT =============
+function exportData() {
+  const data = {
+    version: 1,
+    exported: new Date().toISOString(),
+    employees: state.employees,
+    presence: state.presence,
+    tips: state.tips,
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `tips-manager-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Backup δημιουργήθηκε', 'success');
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.employees || !Array.isArray(data.employees)) throw new Error('Μη έγκυρο αρχείο');
+      confirmAction('Επαναφορά από backup; Όλα τα τρέχοντα δεδομένα θα αντικατασταθούν.', () => {
+        state.employees = data.employees;
+        state.presence = data.presence || {};
+        state.tips = data.tips || {};
+        saveState();
+        renderAll();
+        toast('Δεδομένα επαναφέρθηκαν', 'success');
+      });
+    } catch (err) {
+      toast('Σφάλμα: ' + err.message, 'error');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function exportCSV() {
+  const days = daysInMonth(state.currentYear, state.currentMonth);
+  const rows = [];
+  rows.push([`Tips Manager - ${MONTHS_GR[state.currentMonth-1]} ${state.currentYear}`]);
+  rows.push([]);
+
+  // Παρουσίες
+  rows.push(['ΠΑΡΟΥΣΙΕΣ']);
+  const head = ['Α/Α', 'Όνομα', 'Μονάδες/Μέρα'];
+  for (let d = 1; d <= days; d++) head.push('Ημ.' + d);
+  head.push('Σύν.Μέρες', 'Σύν.Μονάδες');
+  rows.push(head);
+
+  state.employees.forEach((emp, i) => {
+    const r = [i + 1, emp.name, emp.units];
+    for (let d = 1; d <= days; d++) r.push(getPresence(emp.id, d) ? 'ΝΑΙ' : '');
+    const td = empTotalDays(emp);
+    r.push(td, td * Number(emp.units || 0));
+    rows.push(r);
+  });
+
+  rows.push([]);
+  rows.push(['TIPS ΑΝΑ ΗΜΕΡΑ']);
+  const tipsRow = ['', 'Tips Ημέρας (€)', ''];
+  for (let d = 1; d <= days; d++) tipsRow.push(getTip(d));
+  let totalTips = 0;
+  for (let d = 1; d <= days; d++) totalTips += getTip(d);
+  tipsRow.push('', totalTips);
+  rows.push(tipsRow);
+
+  rows.push([]);
+  rows.push(['ΑΝΑΛΥΣΗ TIPS ΑΝΑ ΕΡΓΑΖΟΜΕΝΟ']);
+  rows.push(head);
+  state.employees.forEach((emp, i) => {
+    const r = [i + 1, emp.name, emp.units];
+    let total = 0;
+    for (let d = 1; d <= days; d++) {
+      const v = empTipForDay(emp, d);
+      total += v;
+      r.push(v > 0 ? v.toFixed(2).replace('.', ',') : '');
+    }
+    r.push('', total.toFixed(2).replace('.', ','));
+    rows.push(r);
+  });
+
+  const csv = rows.map(r => r.map(c => {
+    const s = String(c ?? '');
+    if (s.includes(';') || s.includes('"') || s.includes('\n')) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }).join(';')).join('\n');
+
+  const blob = new Blob(['\uFEFF' + csv], {type: 'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `tips-${state.currentYear}-${String(state.currentMonth).padStart(2, '0')}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('CSV εξήχθη', 'success');
+}
+
+// ============= UI HELPERS =============
+function toast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+function confirmAction(text, action) {
+  document.getElementById('modalText').textContent = text;
+  document.getElementById('confirmModal').classList.add('show');
+  pendingAction = action;
+}
+
+function closeModal() {
+  document.getElementById('confirmModal').classList.remove('show');
+  pendingAction = null;
+}
+
+function confirmModalAction() {
+  if (pendingAction) pendingAction();
+  closeModal();
+}
+
+function switchView(view) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.view === view));
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + view));
+}
+
+// ============= INIT =============
+function init() {
+  loadState();
+
+  // Year selector (current year ± 5)
+  const yearSel = document.getElementById('yearSelect');
+  const cy = new Date().getFullYear();
+  for (let y = cy - 5; y <= cy + 5; y++) {
+    const opt = document.createElement('option');
+    opt.value = y; opt.textContent = y;
+    if (y === state.currentYear) opt.selected = true;
+    yearSel.appendChild(opt);
+  }
+
+  document.getElementById('monthSelect').value = state.currentMonth;
+
+  yearSel.addEventListener('change', e => { state.currentYear = parseInt(e.target.value); renderAll(); });
+  document.getElementById('monthSelect').addEventListener('change', e => { state.currentMonth = parseInt(e.target.value); renderAll(); });
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => switchView(tab.dataset.view));
+  });
+
+  document.getElementById('confirmModal').addEventListener('click', e => {
+    if (e.target.id === 'confirmModal') closeModal();
+  });
+
+  renderAll();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
