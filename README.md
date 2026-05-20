@@ -2,9 +2,6 @@
 
 > Διαχείριση παρουσιών και διαμοιρασμού φιλοδωρημάτων για εστιατόρια και μπαρ. Standalone HTML εφαρμογή με τοπική αποθήκευση.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-d4a574?style=flat-square)](https://davidovaselos-9873.github.io/tips-manager/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
-[![No Dependencies](https://img.shields.io/badge/dependencies-0-success?style=flat-square)](#)
 
 ## 📖 Περιγραφή
 
@@ -29,8 +26,6 @@
 
 ## 🚀 Χρήση
 
-### Online (GitHub Pages)
-👉 **[https://davidovaselos-9873.github.io/tips-manager/](https://davidovaselos-9873.github.io/tips-manager/)**
 
 ### Τοπικά
 1. Κατέβασε το `index.html`
@@ -60,9 +55,6 @@
 
 **Σύνολο διαμοιρασμού = 90€** ✓
 
-## 🖼 Screenshots
-
-> _Δες την εφαρμογή σε λειτουργία στο [live demo](https://davidovaselos-9873.github.io/tips-manager/)_
 
 ## 🛠 Τεχνικά
 
@@ -87,7 +79,7 @@ MIT License — δες [LICENSE](LICENSE)
 
 ## 👤 Δημιουργός
 
-**David** — Λογιστής & Developer στη Ξάνθη
+**David** — Λογιστής & Developer 
 
 ---
 
